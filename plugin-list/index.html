@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BZP &bull; Plugin List</title>
+	<link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+	<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+	<h1>Plugin List</h1>
+	<br>
+	<div id="plugin-list">
+		<p id="loading">Loading plugins...</p>
+		<div id="flag-list">
+			<h3 class="centered-h3">Flags</h3>
+		</div>
+		<div id="game-mode-list">
+			<h3 class="centered-h3">Game Modes</h3>
+		</div>
+		<div id="zone-list">
+			<h3 class="centered-h3">Zones</h3>
+		</div>
+		<div id="administration-list">
+			<h3 class="centered-h3">Administration</h3>
+		</div>
+		<div id="server-list">
+			<h3 class="centered-h3">Server</h3>
+		</div>
+		<div id="chat-list">
+			<h3 class="centered-h3">Chat</h3>
+		</div>
+		<div id="game-mode-mechanics-list">
+			<h3 class="centered-h3">Game Mode Mechanics</h3>
+		</div>
+		<div id="command-list">
+			<h3 class="centered-h3">Commands</h3>
+		</div>
+		<div id="mechanic-list">
+			<h3 class="centered-h3">Mechanics</h3>
+		</div>
+		<div id="sample-list">
+			<h3 class="centered-h3">Samples</h3>
+		</div>
+		<div id="flag-mechanic-list">
+			<h3 class="centered-h3">Flag Mechanics</h3>
+		</div>
+		<div id="out-of-date-list">
+			<h3 class="centered-h3">Out Of Date</h3>
+		</div>
+	</div>
+	<p class="small"><a href="/">Main Page</a> &bull; <a href="/submit">Submit New Plugin</a></p>
+</body>
+</html>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", async function () {
+		const pluginList = document.getElementById('plugin-list');
+		const flagList = document.getElementById("flag-list");
+		const gameModeList = document.getElementById("game-mode-list");
+		const zoneList = document.getElementById("zone-list");
+		const administrationList = document.getElementById("administration-list");
+		const serverList = document.getElementById("server-list");
+		const chatList = document.getElementById("chat-list");
+		const gameModeMechanicsList = document.getElementById("game-mode-mechanics-list");
+		const commandList = document.getElementById("command-list");
+		const mechanicList = document.getElementById("mechanic-list");
+		const sampleList = document.getElementById("sample-list");
+		const flagMechanicList = document.getElementById("flag-mechanic-list");
+		const outOfDateList = document.getElementById("out-of-date-list");		const loadingItem = document.getElementById('loading');
+
+		const pluginFetch = await fetch('http://localhost:3000/list-plugins', {
+			method: 'GET',
+		});
+
+		if (!pluginFetch.ok) {
+			loadingItem.innerHTML = "The plugin list failed to load. This is likely a bug; please contact the site administrator.";
+			return;
+		}
+
+		try {
+			let pluginListJSON = await pluginFetch.json();
+
+			for (const plugin of pluginListJSON.items) {
+				if (plugin.approved === false)
+					if (localStorage.getItem('token') === null)
+						continue;
+
+				let pluginButton = document.createElement("button");
+				pluginButton.className = "plugin-card left-aligned";
+
+				const pluginName = document.createElement("h3");
+				pluginName.innerText = plugin.name;
+				pluginButton.appendChild(pluginName);
+
+				const pluginAuthor = document.createElement("i");
+				pluginAuthor.innerText = "    by " + plugin.author;
+				pluginAuthor.className = "pre-wrap-class";
+				pluginButton.appendChild(pluginAuthor);
+
+				let category = plugin.category || "flags";
+				if (category === "flags") {
+					category = "Flags"
+					flagList.appendChild(pluginButton);
+				} else if (category === "game-mode") {
+					category = "Game Mode"
+					gameModeList.appendChild(pluginButton);
+				} else if (category === "zones") {
+					category = "Zones"
+					zoneList.appendChild(pluginButton);
+				} else if (category === "administration") {
+					category = "Administration"
+					administrationList.appendChild(pluginButton);
+				} else if (category === "server") {
+					category = "Server"
+					serverList.appendChild(pluginButton);
+				} else if (category === "chat") {
+					category = "Chat"
+					chatList.appendChild(pluginButton);
+				} else if (category === "game-mode-mechanics") {
+					category = "Game Mode Mechanics"
+					gameModeMechanicsList.appendChild(pluginButton);
+				} else if (category === "commands") {
+					category = "Commands"
+					commandList.appendChild(pluginButton);
+				} else if (category === "mechanics") {
+					category = "Mechanics"
+					mechanicList.appendChild(pluginButton);
+				} else if (category === "samples") {
+					category = "Samples"
+					sampleList.appendChild(pluginButton);
+				} else if (category === "flag-mechanics") {
+					category = "Flag Mechanic Changes"
+					flagMechanicList.appendChild(pluginButton);
+				} else if (category === "out-of-date") {
+					category = "Out Of Date"
+					outOfDateList.appendChild(pluginButton);
+				}
+
+				const pluginDescription = document.createElement("p");
+				pluginDescription.innerText = plugin.description/* + " (category: " + category + ")"*/;
+				pluginButton.appendChild(pluginDescription);
+
+				if (plugin.approved === false) {
+					const approvedText = document.createElement("i");
+					approvedText.style.color = 'red';
+					approvedText.innerText = "NOTE: PLUGIN NOT APPROVED";
+					pluginButton.appendChild(approvedText);
+				}
+
+				pluginButton.addEventListener("click", () => {
+					window.location.href = "/plugin?id=" + plugin.id;
+				});
+
+				// pluginList.appendChild(pluginButton);
+			}
+
+			loadingItem.hidden = true;
+		} catch {
+			loadingItem.innerHTML = "There was a problem loading the plugin list. Please contact the site administrator.";
+			return;
+		}
+	});
+</script>

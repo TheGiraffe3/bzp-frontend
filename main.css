@@ -1,0 +1,189 @@
+:root {
+	color-scheme: light dark;
+}
+
+body {
+	background-color: rgb(240, 245, 240);
+}
+
+h1 {
+	text-align: center;
+}
+
+p {
+	text-align: center;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="link"],
+input[type="file"],
+.space-taker,
+.dropdown-styling {
+	width: 320px;
+	padding: 3px;
+
+	background-color: rgb(230, 230, 230);
+	color: #1a6327;
+	border: 1px solid #13471c;
+	border-radius: 6px;
+}
+
+input[type="submit"] {
+	width: 60px;
+
+	background-color: rgb(230, 230, 230);
+	color: #13471c;
+	border: 1px solid #13471c;
+	border-radius: 6px;
+}
+
+.centered-div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.centered-h3 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.form-padding {
+	margin-bottom: 10px;
+}
+
+.link-padding {
+	margin-bottom: 10px;
+}
+
+.submit-button {
+	padding-top: 10px;
+	position: relative;
+	left: -10px;
+}
+
+.label-padding {
+	position: relative;
+	left: -10px;
+	margin-bottom: 5px;
+	color: #13471c;
+}
+
+.small {
+	font-size: 11px;
+}
+
+.submit-p {
+	color: #1a6327;
+}
+
+.single-plugin-div {
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: rgb(230, 230, 230);
+	border-radius: 10px;
+}
+
+.plugin-card {
+	background: none;
+	border: none;
+	display: block;
+	width: 500px;
+	margin: 0 auto;
+	background-color: rgb(230, 230, 230);
+	border-radius: 10px;
+	margin-bottom: 10px;
+}
+
+.plugin-card p,
+.plugin-card h3,
+.plugin-card i {
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+.plugin-card:hover {
+	background-color: rgb(220, 220, 220);
+	cursor: pointer;
+}
+
+.left-aligned p,
+.left-aligned h3,
+.left-aligned i {
+	display: block;
+	text-align: left;
+}
+
+.pre-wrap-class {
+	white-space: pre-wrap;
+}
+
+.remove-button {
+	width: 110px;
+	background-color: rgb(220, 220, 220);
+	color: #691b1b;
+	border: 1px solid #13471c;
+	border-radius: 6px;
+}
+
+.remove-button:hover {
+	width: 110px;
+	background-color: rgb(210, 210, 210);
+	color: #691b1b;
+	border: 1px solid #13471c;
+	border-radius: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: rgb(90, 95, 90);
+	}
+
+	h1, h3, p, i {
+		color: rgb(180, 180, 180);
+	}
+
+	a {
+		color: rgb(211, 105, 211);
+	}
+
+	input[type="text"],
+	input[type="password"],
+	input[type="link"],
+	input[type="file"],
+	.space-taker,
+	.dropdown-styling {
+		background-color: rgb(110, 110, 110);
+		color: #30b749;
+		border: 1px solid #13471c;
+	}
+
+	.submit-p {
+		color: #30b749;
+	}
+
+	.label-padding {
+		color: #30b749;
+	}
+
+	input[type="submit"] {
+		background-color: rgb(110, 110, 110);
+		color: #30b749;
+		border: 1px solid #13471c;
+	}
+
+	.plugin-card {
+		background-color: rgb(110, 110, 110);
+	}
+
+	.plugin-card:hover {
+		background-color: rgb(130, 130, 130);
+	}
+
+	.single-plugin-div {
+		background-color: rgb(110, 110, 110);
+	}
+}

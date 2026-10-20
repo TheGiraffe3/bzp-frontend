@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BZP &bull; Login + Logout</title>
+	<link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+	<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+	<h1>Login/Logout</h1>
+	<br>
+	<div class="centered-div">
+		<form id="login-form" enctype="text/plain" autocomplete="on">
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="email">Email</label>
+				</div>
+				<input type="text" id="email" name="email">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="password">Password</label>
+				</div>
+				<input type="password" id="password" name="password">
+			</div>
+			<div class="form-padding submit-button">
+				<input type="submit" value="Login">
+			</div>
+		</form>
+	</div>
+	<div class="centered-div">
+		<form id="logout-form" enctype="text/plain" autocomplete="on">
+			<div class="space-taker"></div>
+			<div class="form-padding submit-button">
+				<input type="submit" value="Logout">
+			</div>
+		</form>
+	</div>
+	<br>
+	<div>
+		<p id="return-message" class="submit-p"></p>
+	</div>
+	<p class="small"><a href="/">Main Page</a> &bull; <a href="/plugin-list">Plugin List</a></p>
+</body>
+</html>
+<script>
+	const form = document.getElementById('login-form');
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault();
+
+		let validSubmission = true;
+		const formData = new FormData(form);
+		const returnMessage = document.getElementById('return-message');
+
+		const email = formData.get('email');
+		const password = formData.get('password');
+		if (!email || !password) {
+			validSubmission = false;
+			returnMessage.textContent = 'Please provide both an email and a password.';
+			returnMessage.style.color = 'red';
+		}
+
+		if (validSubmission == true) {
+			returnMessage.textContent = 'Logging in...';
+			returnMessage.style.color = '';
+			const response = await fetch('http://localhost:3000/login?email=' + email + '&password=' + password, {
+				method: 'POST'
+			});
+
+			if (response.ok) {
+				returnMessage.innerHTML = 'Logged in!';
+				const data = await response.json();
+				localStorage.setItem('token', data.token);
+			} else {
+				returnMessage.innerHTML = 'Login failed. Check the console for details.';
+				returnMessage.style.color = 'red';
+				console.error('Failed to log in:', response.statusText);
+			}
+		}
+	});
+
+	const logoutForm = document.getElementById('logout-form');
+	logoutForm.addEventListener('submit', async (event) => {
+		event.preventDefault();
+
+		const returnMessage = document.getElementById('return-message');
+
+		const response = await fetch('http://localhost:3000/logout', {
+			method: 'POST'
+		});
+
+		if (response.ok) {
+			returnMessage.innerHTML = 'Logged out!';
+			localStorage.clear();
+		} else {
+			returnMessage.innerHTML = 'Logout failed. Check the console for details.';
+			returnMessage.style.color = 'red';
+			console.error('Failed to log out:', response.statusText);
+		}
+	});
+</script>

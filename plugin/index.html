@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BZP &bull; Plugin Name</title>
+	<link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+	<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+	<p id="loading">Loading plugin...</p>
+	<br>
+	<div class="single-plugin-div left-aligned" id="plugin-info">
+		<h3 id="name"></h3>
+		<i class="pre-wrap-class" id="author"></i>
+		<p id="description"></p>
+		<p id="category"></p>
+		<p id="bzfsVersion"></p>
+		<p id="website"></p>
+		<div id="approval-area">
+			<p id="approved-warning"></p>
+			<input type="checkbox" id="approval-checkbox">
+			<span>Approve</span>
+			<p id="approval-return"></p>
+		</div>
+		<div id="removal-area">
+			<button type="button" id="removal-button" name="Remove" class="remove-button">Remove Plugin</button>
+			<p id="removal-return"></p>
+		</div>
+	</div>
+	<p class="small"><a href="/">Main Page</a> &bull; <a href="/plugin-list">Plugin List</a></p>
+</body>
+</html>
+<script type="text/javascript">
+	const checkbox = document.getElementById('approval-checkbox');
+	checkbox.addEventListener('change', async function() {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const id = urlParams.get('id');
+
+		const token = localStorage.getItem('token');
+
+		const pluginFetch = await fetch('http://localhost:3000/toggle-plugin-status?id=' + id, {
+			method: 'PATCH',
+			headers: {
+				token: token
+			}
+		});
+
+		if (!pluginFetch.ok) {
+			console.warn(pluginFetch.response);
+			document.getElementById("approval-return").textContent = "Approval toggle failed. Make sure you have admin access.";
+			document.getElementById("approval-return").style.color = "red";
+		} else {
+			document.getElementById("approval-return").textContent = "Approval status toggled!";
+			document.getElementById("approval-return").style.color = "green";
+			setTimeout(function() {
+    			window.location.reload();
+			}, 1000);
+		}
+	});
+
+	const removalButton = document.getElementById('removal-button');
+	removalButton.addEventListener('click', async function() {
+		if (!window.confirm("Are you sure this plugin should be removed?"))
+			return;
+
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const id = urlParams.get('id');
+
+		const token = localStorage.getItem('token');
+
+		const pluginRemove = await fetch('http://localhost:3000/remove-plugin?id=' + id, {
+			method: 'DELETE',
+			headers: {
+				token: token
+			}
+		});
+
+		if (!pluginRemove.ok) {
+			console.warn(pluginRemove.response);
+			document.getElementById("removal-return").textContent = "Failed to remove plugin. Make sure you have admin access.";
+			document.getElementById("removal-return").style.color = "red";
+		} else {
+			document.getElementById("removal-return").textContent = "Removed plugin.";
+			document.getElementById("removal-return").style.color = "green";
+		}
+	});
+
+	document.addEventListener("DOMContentLoaded", async function () {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const id = urlParams.get('id');
+
+		const pluginFetch = await fetch('http://localhost:3000/get-plugin?id=' + id, {
+			method: 'GET',
+		});
+
+		if (!pluginFetch.ok) {
+			document.getElementById("loading").innerHTML = "<br>We couldn't find that plugin. Do you have the wrong ID?<br>If you believe this to be an issue on our end, please contact the site administrator.";
+			document.getElementById("plugin-info").hidden = true;
+			document.title = "BZP \u2022 Unknown Plugin";
+			return;
+		}
+
+		const plugin = await pluginFetch.json();
+
+		const approved = plugin.approved;
+		if (approved === false && localStorage.getItem('token') === null) {
+			document.getElementById("loading").innerHTML = "<br>This plugin has not been approved yet, so it cannot be accessed.<br>To request approval, you may contact the site administrator.";
+			document.getElementById("plugin-info").hidden = true;
+			document.title = "BZP \u2022 Unapproved Plugin";
+			return;
+		}
+
+		if (approved === true) {
+			document.getElementById("approval-checkbox").checked = true;
+		}
+
+		if (localStorage.getItem('token') === null) {
+			document.getElementById("approval-area").hidden = true;
+			document.getElementById("removal-area").hidden = true;
+		}
+
+		const name = plugin.name || "Unknown";
+		const author = "    by " + (plugin.author || "Unknown");
+		const license = " Under the " + (plugin.license || "Unknown") + " license.";
+		const description = (plugin.description || "Unknown") + license;
+		const bzfsVersion = "BZFS Version: " + (plugin.bzfs_version || "2.4.0") + "+";
+		let website = "";
+		if (plugin.website) {
+			website = '<a href="' + plugin.website + '" target="_blank">' + "Website" + '</a> / ';
+		}
+		let download = "";
+		if (plugin.direct_download_link) {
+			download = plugin.direct_download_link;
+		} else {
+			download = "./download?id=" + id;
+		}
+		download = '<a href="' + download + '" target="_blank">Download</a>';
+
+		let category = plugin.category || "flags";
+		if (category === "flags")				category = "Flags"
+		if (category === "game-mode")			category = "Game Mode"
+		if (category === "zones")				category = "Zones"
+		if (category === "administration")		category = "Administration"
+		if (category === "server")				category = "Server"
+		if (category === "chat")				category = "Chat"
+		if (category === "game-mode-mechanics")	category = "Game Mode Mechanics"
+		if (category === "commands")			category = "Commands"
+		if (category === "mechanics")			category = "Mechanics"
+		if (category === "samples")				category = "Samples"
+		if (category === "flag-mechanics")		category = "Flag Mechanic Changes"
+		if (category === "out-of-date")			category = "Out Of Date"
+		category = "Category: " + category;
+
+		document.getElementById("loading").textContent = "";
+		document.getElementById("name").textContent = name;
+		document.getElementById("author").textContent = author;
+		document.getElementById("description").textContent = description;
+		document.getElementById("category").textContent = category;
+		document.getElementById("bzfsVersion").textContent = bzfsVersion;
+		document.getElementById("website").innerHTML = website + download;
+		if (approved === false) {
+			document.getElementById("approved-warning").innerHTML = "Note: this plugin has not yet been approved.";
+			document.getElementById("approved-warning").style.color = "darkred";
+		}
+
+		document.title = "BZP \u2022 " + name;
+	});
+</script>

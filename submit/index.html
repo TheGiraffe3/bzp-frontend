@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BZP &bull; Submit New Plugin</title>
+	<link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+	<link rel="stylesheet" href="../main.css">
+</head>
+<body>
+	<h1>Submit A Plugin</h1>
+	<br>
+	<p>Fill in the form below, or go back to the <a href="/">main page</a>.</p>
+	<br>
+	<div class="centered-div">
+		<form id="submit-form" enctype="multipart/form-data" autocomplete="on">
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="">Name</label>
+				</div>
+				<input type="text" id="name" name="name">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="author">Author</label>
+				</div>
+				<input type="text" id="author" name="author">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="license">License</label>
+				</div>
+				<input type="text" id="license" name="license">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="description">Description</label>
+				</div>
+				<input type="text" id="description" name="description">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="category">Category</label>
+				</div>
+				<select class="dropdown-styling" id="category" name="category">
+					<option value="flags">Flags</option>
+					<option value="game-mode">Game Mode</option>
+					<option value="zones">Zones</option>
+					<option value="administration">Administration</option>
+					<option value="server">Server</option>
+					<option value="chat">Chat</option>
+					<option value="game-mode-mechanics">Game Mode Mechanics</option>
+					<option value="commands">Commands</option>
+					<option value="mechanics">Mechanics</option>
+					<option value="samples">Samples</option>
+					<option value="flag-mechanics">Flag Mechanic Changes</option>
+					<option value="out-of-date">Out Of Date</option>
+				</select>
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="bzfsVersion">Earliest Required BZFS Version</label>
+				</div>
+				<input type="text" id="bzfsVersion" name="bzfsVersion" value="2.4.0">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="website">Website</label>
+				</div>
+				<input type="text" id="website" name="website">
+			</div>
+			<div class="form-padding">
+				<div class="label-padding">
+					<label for="downloadLink">Direct Download Link / Upload File</label>
+				</div>
+				<div class="link-padding">
+					<input type="link" id="downloadLink" name="downloadLink">
+				</div>
+				<div class="link-padding">
+					<input type="file" id="file" name="file" accept=".zip">
+				</div>
+			</div>
+			<div class="form-padding submit-button">
+				<input type="submit" value="Submit">
+			</div>
+		</form>
+	</div>
+	<br>
+	<div>
+		<p id="return-message" class="submit-p"></p>
+	</div>
+</body>
+</html>
+<script>
+	function handleFailure(area) {
+		const returnMessage = document.getElementById('return-message');
+		returnMessage.style.color = 'red';
+		returnMessage.textContent = 'Please provide a' + (area == 0 ? ' name' : area == 1 ? 'n author' : area == 2 ? ' license' : area == 3 ? ' description' : area == 4 ? ' properly formed website link' : ' valid download link or upload a file') + '.';
+		return;
+	}
+
+	const fileInput = document.getElementById('file');
+	fileInput.addEventListener('change', async (event) => {
+		const downloadLink = document.getElementById('downloadLink');
+		if (event.target.files.length > 0) {
+			downloadLink.disabled = true;
+			downloadLink.value = '(none)';
+		} else {
+			downloadLink.disabled = false;
+			downloadLink.value = '';
+		}
+	});
+
+	const form = document.getElementById('submit-form');
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault();
+
+		let validSubmission = true;
+		const formData = new FormData(form);
+		const returnMessage = document.getElementById('return-message');
+
+		const name = formData.get('name');
+		const author = formData.get('author');
+		const license = formData.get('license');
+		const description = formData.get('description');
+		const bzfsVersion = formData.get('bzfsVersion');
+		const website = formData.get('website');
+		const downloadLink = formData.get('downloadLink');
+		const sourceFile = formData.get('file');
+		const sourceInput = document.getElementById('downloadLink');
+		if (!name) {
+			handleFailure(0);
+			validSubmission = false;
+		} else if (!author) {
+			handleFailure(1);
+			validSubmission = false;
+		} else if (!license) {
+			handleFailure(2);
+			validSubmission = false;
+		} else if (!description) {
+			handleFailure(3);
+			validSubmission = false;
+		} else if (website) {
+			try {
+				new URL(website);
+			} catch {
+				handleFailure(4);
+				validSubmission = false;
+			}
+		} else if (sourceInput.disabled == false) {
+			if (downloadLink == '') {
+				handleFailure(5);
+				validSubmission = false;
+			}
+			try {
+				new URL(downloadLink);
+			} catch {
+				handleFailure(5);
+				validSubmission = false;
+			}
+		}
+
+		if (validSubmission == true) {
+			returnMessage.textContent = 'Submitting plugin...';
+			returnMessage.style.color = '';
+			const response = await fetch('http://localhost:3000/add-plugin', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				returnMessage.innerHTML = 'Plugin submitted!<br>After approval, you will be able to see it on the <a href="/plugin-list">plugin list</a>.'
+			} else {
+				returnMessage.innerHTML = 'Plugin submission failed.<br>This is likely a bug with the server, so please report it to the site author.'
+				returnMessage.style.color = 'red';
+				console.error('Failed to submit plugin:', response.statusText);
+			}
+		}
+	});
+</script>

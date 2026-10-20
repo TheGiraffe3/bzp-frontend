@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BZP &bull; Download Plugin</title>
+	<link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+	<link rel="stylesheet" href="../../main.css">
+</head>
+<body>
+	<br>
+	<p id="loading">Downloading...</p>
+	<p class="hidden" id="download"></p>
+</body>
+</html>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", async function () {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const id = urlParams.get('id');
+
+		const pluginFetch = await fetch('http://localhost:3000/get-plugin-download?id=' + id, {
+			method: 'GET',
+		});
+
+		if (!pluginFetch.ok) {
+			document.getElementById("loading").innerHTML = "No source code found for this plugin!";
+			return;
+		}
+
+		const plugin = await pluginFetch.json();
+
+		const downloadLink = document.createElement('a');
+		downloadLink.href = plugin;
+		downloadLink.click();
+	});
+</script>
