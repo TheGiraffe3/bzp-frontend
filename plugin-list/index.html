@@ -92,7 +92,11 @@
 				pluginButton.appendChild(pluginName);
 
 				const pluginAuthor = document.createElement("i");
-				pluginAuthor.innerText = "    by " + plugin.author;
+				if (plugin.author === 'official') {
+					pluginAuthor.innerText = "    official";
+				} else {
+					pluginAuthor.innerText = "    by " + plugin.author;
+				}
 				pluginAuthor.className = "pre-wrap-class";
 				pluginButton.appendChild(pluginAuthor);
 

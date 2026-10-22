@@ -122,7 +122,10 @@
 		}
 
 		const name = plugin.name || "Unknown";
-		const author = "    by " + (plugin.author || "Unknown");
+		let author = "    by " + (plugin.author || "Unknown");
+		if (plugin.author === 'official') {
+			author = "    official";
+		}
 		const license = " Under the " + (plugin.license || "Unknown") + " license.";
 		const description = (plugin.description || "Unknown") + license;
 		const bzfsVersion = "BZFS Version: " + (plugin.bzfs_version || "2.4.0") + "+";
