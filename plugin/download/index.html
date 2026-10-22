@@ -17,19 +17,6 @@
 		const urlParams = new URLSearchParams(queryString);
 		const id = urlParams.get('id');
 
-		const pluginFetch = await fetch('http://localhost:3000/get-plugin-download?id=' + id, {
-			method: 'GET',
-		});
-
-		if (!pluginFetch.ok) {
-			document.getElementById("loading").innerHTML = "No source code found for this plugin!";
-			return;
-		}
-
-		const plugin = await pluginFetch.json();
-
-		const downloadLink = document.createElement('a');
-		downloadLink.href = plugin;
-		downloadLink.click();
+		window.location.href = 'http://localhost:3000/get-plugin-download?id=' + id;
 	});
 </script>
