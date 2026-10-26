@@ -126,7 +126,12 @@
 		if (plugin.author === 'official') {
 			author = "    official";
 		}
-		const license = " Under the " + (plugin.license || "Unknown") + " license.";
+		let license = "";
+		if (plugin.license === 'All Rights Reserved' || !plugin.license) {
+			license = " All Rights Reserved.";
+		} else {
+			license = " Under the " + plugin.license + " license.";
+		}
 		const description = (plugin.description || "Unknown") + license;
 		const bzfsVersion = "BZFS Version: " + (plugin.bzfs_version || "2.4.0") + "+";
 		let website = "";
