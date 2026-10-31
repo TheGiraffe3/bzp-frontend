@@ -62,7 +62,7 @@
 		if (validSubmission == true) {
 			returnMessage.textContent = 'Logging in...';
 			returnMessage.style.color = '';
-			const response = await fetch('http://localhost:3000/login?email=' + email + '&password=' + password, {
+			const response = await fetch('http://localhost:5060/login?email=' + email + '&password=' + password, {
 				method: 'POST'
 			});
 
@@ -84,7 +84,7 @@
 
 		const returnMessage = document.getElementById('return-message');
 
-		const response = await fetch('http://localhost:3000/logout', {
+		const response = await fetch('http://localhost:5060/logout', {
 			method: 'POST'
 		});
 
