@@ -140,7 +140,7 @@
 				}
 
 				const pluginDescription = document.createElement("p");
-				pluginDescription.innerText = plugin.description/* + " (category: " + category + ")"*/;
+				pluginDescription.innerText = plugin.description;
 				pluginButton.appendChild(pluginDescription);
 
 				if (plugin.approved === false) {
@@ -153,8 +153,6 @@
 				pluginButton.addEventListener("click", () => {
 					window.location.href = "/plugin?id=" + plugin.id;
 				});
-
-				// pluginList.appendChild(pluginButton);
 			}
 
 			loadingItem.hidden = true;
