@@ -52,7 +52,6 @@
 </html>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", async function () {
-		const pluginList = document.getElementById('plugin-list');
 		const flagList = document.getElementById("flag-list");
 		const gameModeList = document.getElementById("game-mode-list");
 		const zoneList = document.getElementById("zone-list");
@@ -77,9 +76,9 @@
 		}
 
 		try {
-			let pluginListJSON = await pluginFetch.json();
+			let pluginList = await pluginFetch.json();
 
-			for (const plugin of pluginListJSON.items) {
+			for (const plugin of pluginList) {
 				if (plugin.approved === false)
 					if (localStorage.getItem('token') === null)
 						continue;
