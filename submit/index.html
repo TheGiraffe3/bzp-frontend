@@ -161,7 +161,7 @@
 		if (validSubmission == true) {
 			returnMessage.textContent = 'Submitting plugin...';
 			returnMessage.style.color = '';
-			const response = await fetch('http://localhost:5060/add-plugin', {
+			const response = await fetch('http://localhost:5070/add-plugin', {
 				method: 'POST',
 				body: formData
 			});
