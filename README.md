@@ -1,4 +1,4 @@
-## BZP: BZFlag Plugins: Frontend
+## BZP • BZFlag Plugins • Frontend
 
 This repository hosts the frontend HTML and CSS files for [BZP](https://bzp.sandybees.com).  If you would like to discuss BZP, the forum topic may be best suited.
 
